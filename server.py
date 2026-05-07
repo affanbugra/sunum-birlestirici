@@ -122,7 +122,10 @@ def download(file_id):
 
 @app.route('/debug', methods=['POST'])
 def debug():
-    return jsonify(request.get_json()), 200
+    data = request.get_json()
+    import sys
+    print('DEBUG DATA:', data, flush=True, file=sys.stderr)
+    return jsonify(data), 200
 
 
 @app.route('/', methods=['GET'])
