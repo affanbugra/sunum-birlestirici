@@ -120,12 +120,17 @@ def download(file_id):
     return send_file(f['data'], download_name=f['filename'], as_attachment=True, mimetype=f['mimetype'])
 
 
+last_debug = {}
+
 @app.route('/debug', methods=['POST'])
 def debug():
-    data = request.get_json()
-    import sys
-    print('DEBUG DATA:', data, flush=True, file=sys.stderr)
-    return jsonify(data), 200
+    global last_debug
+    last_debug = request.get_json() or {}
+    return jsonify(last_debug), 200
+
+@app.route('/debug', methods=['GET'])
+def debug_view():
+    return jsonify(last_debug), 200
 
 
 @app.route('/', methods=['GET'])
