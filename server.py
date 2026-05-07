@@ -27,8 +27,16 @@ def merge():
     urls = []
 
     if 'records' in data:
+        records = data['records']
+        # NocoBase string olarak gönderirse parse et
+        if isinstance(records, str):
+            import json as json_lib
+            try:
+                records = json_lib.loads(records)
+            except Exception:
+                records = []
         # Çoklu kayıt: her kaydın dosya alanını topla
-        for record in data['records']:
+        for record in (records if isinstance(records, list) else [records]):
             for field_val in record.values():
                 if isinstance(field_val, list):
                     for item in field_val:
