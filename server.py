@@ -18,12 +18,26 @@ merged_files = {}
 @app.route('/merge', methods=['POST'])
 def merge():
     data = request.get_json()
-    if not data or 'urls' not in data:
-        return jsonify({'error': 'urls alanı eksik'}), 400
+    if not data:
+        return jsonify({'error': 'JSON verisi eksik'}), 400
 
-    urls = data['urls']
+    # files: NocoBase attachment dizisi [{"url": "...", "filename": "..."}, ...]
+    # urls: düz URL dizisi ["url1", "url2"]
+    raw_files = data.get('files') or data.get('urls') or []
+    if not raw_files:
+        return jsonify({'error': 'Dosya listesi boş'}), 400
+
+    # URL listesini normalize et
+    urls = []
+    for item in raw_files:
+        if isinstance(item, dict):
+            urls.append(item.get('url') or item.get('path') or '')
+        elif isinstance(item, str):
+            urls.append(item)
+    urls = [u for u in urls if u]
+
     if not urls:
-        return jsonify({'error': 'Dosya URL listesi boş'}), 400
+        return jsonify({'error': 'Geçerli URL bulunamadı'}), 400
 
     pptx_buffers = []
     pdf_buffers = []
