@@ -21,20 +21,33 @@ def merge():
     if not data:
         return jsonify({'error': 'JSON verisi eksik'}), 400
 
-    # files: NocoBase attachment dizisi [{"url": "...", "filename": "..."}, ...]
-    # urls: düz URL dizisi ["url1", "url2"]
-    raw_files = data.get('files') or data.get('urls') or []
-    if not raw_files:
-        return jsonify({'error': 'Dosya listesi boş'}), 400
-
-    # URL listesini normalize et
+    # records: NocoBase'den gelen kayıt dizisi (çoklu satır seçimi)
+    # files: tek kayıttaki attachment dizisi
+    # urls: düz URL dizisi
     urls = []
-    for item in raw_files:
-        if isinstance(item, dict):
-            urls.append(item.get('url') or item.get('path') or '')
-        elif isinstance(item, str):
-            urls.append(item)
+
+    if 'records' in data:
+        # Çoklu kayıt: her kaydın dosya alanını topla
+        for record in data['records']:
+            for field_val in record.values():
+                if isinstance(field_val, list):
+                    for item in field_val:
+                        if isinstance(item, dict) and ('url' in item or 'path' in item):
+                            u = item.get('url') or item.get('path') or ''
+                            if u:
+                                urls.append(u)
+    else:
+        raw_files = data.get('files') or data.get('urls') or []
+        for item in raw_files:
+            if isinstance(item, dict):
+                urls.append(item.get('url') or item.get('path') or '')
+            elif isinstance(item, str):
+                urls.append(item)
+
     urls = [u for u in urls if u]
+
+    if not urls:
+        return jsonify({'error': 'Dosya listesi boş'}), 400
 
     if not urls:
         return jsonify({'error': 'Geçerli URL bulunamadı'}), 400
