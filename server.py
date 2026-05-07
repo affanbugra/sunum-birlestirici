@@ -85,6 +85,39 @@ def download(file_id):
     return send_file(f['data'], download_name=f['filename'], as_attachment=True, mimetype=f['mimetype'])
 
 
+@app.route('/', methods=['GET'])
+def index():
+    return '''<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunum Birleştirici</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: white; border-radius: 12px; padding: 48px; max-width: 480px; width: 100%; box-shadow: 0 2px 16px rgba(0,0,0,0.08); text-align: center; }
+    h1 { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    p { color: #666; font-size: 14px; margin-bottom: 32px; line-height: 1.5; }
+    .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 24px; }
+    .formats { display: flex; justify-content: center; gap: 12px; }
+    .fmt { background: #f0f4ff; color: #3b5bdb; border-radius: 8px; padding: 12px 24px; font-size: 13px; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">&#x2713; Çevrimiçi</span>
+    <h1>Sunum Birleştirici</h1>
+    <p>Bu servis NocoBase ile entegre çalışır.<br>Dosyalarınızı NocoBase üzerinden yükleyip birleştirebilirsiniz.</p>
+    <div class="formats">
+      <div class="fmt">PPTX</div>
+      <div class="fmt">PDF</div>
+    </div>
+  </div>
+</body>
+</html>''', 200, {'Content-Type': 'text/html'}
+
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok'})
