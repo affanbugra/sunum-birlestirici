@@ -120,6 +120,11 @@ def download(file_id):
     return send_file(f['data'], download_name=f['filename'], as_attachment=True, mimetype=f['mimetype'])
 
 
+@app.route('/debug', methods=['POST'])
+def debug():
+    return jsonify(request.get_json()), 200
+
+
 @app.route('/', methods=['GET'])
 def index():
     return '''<!DOCTYPE html>
