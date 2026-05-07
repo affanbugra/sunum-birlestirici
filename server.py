@@ -73,7 +73,7 @@ def merge():
         merged_files[file_id] = {'data': output, 'filename': 'merged.pdf', 'mimetype': 'application/pdf'}
 
     download_url = f'https://sunum-birlestirici.onrender.com/download/{file_id}'
-    return jsonify({'download_url': download_url, 'message': 'Birleştirme başarılı'})
+    return download_url, 200, {'Content-Type': 'text/plain'}
 
 
 @app.route('/download/<file_id>', methods=['GET'])
